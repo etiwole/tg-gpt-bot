@@ -1,0 +1,24 @@
+{
+  "name": "etiwole-gpt-bot-2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@types/fluent-ffmpeg": "^2.1.21",
+    "axios": "^1.4.0",
+    "dotenv": "^16.0.3",
+    "fluent-ffmpeg": "^2.1.2",
+    "nodemon": "^2.0.22",
+    "openai": "^3.2.1",
+    "telegraf": "^4.12.2"
+  }
+}

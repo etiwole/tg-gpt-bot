@@ -1,0 +1,7 @@
+.idea
+.vscode
+.DS_Store
+.env.local
+/uploads/*.ogg
+/uploads/*.mp3
+node_modules
