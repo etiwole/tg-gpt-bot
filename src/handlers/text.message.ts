@@ -1,7 +1,7 @@
-import {IMessageHandler, MessageType} from "../types";
-import {Context} from "telegraf";
 import OpenAIService from "../services/OpenAI.service";
-import {ChatCompletionRequestMessage} from "openai/api";
+import {IMessageHandler, MessageType} from "../types";
+import {INITIAL_SESSION} from "../config/session";
+import {OpenAiChatRoles} from "../services/OpenAI.service";
 
 export default class TextMessage implements IMessageHandler {
     public key: MessageType = 'text';
@@ -11,13 +11,19 @@ export default class TextMessage implements IMessageHandler {
         this.openAiService = new OpenAIService();
     }
 
-    // @ts-ignore
-    async handle(ctx: Context<Update>): void {
+    async handle(ctx: any): Promise<void> {
+        ctx.session ??= INITIAL_SESSION;
+
         const {text: content} = ctx.message;
 
-        const messages: ChatCompletionRequestMessage[] = [{role: 'user', content}];
+        ctx.session.messages.push({role: OpenAiChatRoles.USER, content});
 
-        const response: any = await this.openAiService.chatCompletion(messages);
+        const response: any = await this.openAiService.chatCompletion(ctx.session.messages);
+
+        ctx.session.messages.push({
+            role: OpenAiChatRoles.ASSISTANT,
+            content: response.content,
+        });
 
         await ctx.reply(response?.content);
     }

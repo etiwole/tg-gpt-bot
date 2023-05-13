@@ -2,6 +2,11 @@ import {Configuration, OpenAIApi} from "openai";
 import {ChatCompletionRequestMessage} from "openai/api";
 import {createReadStream} from "fs";
 
+export enum OpenAiChatRoles {
+    USER = "user",
+    ASSISTANT = "assistant",
+};
+
 export default class OpenAIService {
     private openai: OpenAIApi;
     constructor() {

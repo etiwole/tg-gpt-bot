@@ -1,6 +1,7 @@
 import {Context} from "telegraf";
 
 export type MessageType = 'text' | 'voice';
+export type CommandType = 'new' | 'start';
 
 interface IAppTokens {
     telegram: string;
@@ -10,6 +11,7 @@ interface IAppTokens {
 export interface IBotConfig {
     tokens: IAppTokens;
     handlers: IMessageHandler[];
+    commands: ICommandHandler[];
     paths: {
         upload: string,
     };
@@ -17,6 +19,10 @@ export interface IBotConfig {
 
 export interface IMessageHandler {
     key: MessageType;
-    // @ts-ignore
-    handle: (ctx: Context<Update>, options: IBotConfig) => void;
+    handle: (ctx: any, options: IBotConfig) => void;
+}
+
+export interface ICommandHandler {
+    key: CommandType;
+    handle: (ctx: any, options: IBotConfig) => void;
 }

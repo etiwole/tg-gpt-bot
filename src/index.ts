@@ -4,6 +4,7 @@ import Bot from "./bot";
 import VoiceMessage from "./handlers/voice.message";
 import TextMessage from "./handlers/text.message";
 import {IBotConfig} from "./types";
+import SessionCommand from "./commands/session.commands";
 
 dotenv.config({
     path: path.resolve(__dirname, '..', '.env.local'),
@@ -21,6 +22,10 @@ const config: IBotConfig = {
     handlers: [
         new VoiceMessage(),
         new TextMessage(),
+    ],
+    commands: [
+        new SessionCommand("new"),
+        new SessionCommand("start"),
     ],
 };
 

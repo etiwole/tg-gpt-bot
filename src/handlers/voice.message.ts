@@ -2,8 +2,10 @@ import {IBotConfig, IMessageHandler, MessageType} from "../types";
 import {Context} from "telegraf";
 import Uploader from "../helpers/Uploader";
 import Converter from "../helpers/Converter";
-import OpenAIService from "../services/OpenAI.service";
+import OpenAIService, {OpenAiChatRoles} from "../services/OpenAI.service";
 import {ChatCompletionRequestMessage} from "openai/api";
+import {INITIAL_SESSION} from "../config/session";
+import {code} from "telegraf/format";
 
 export default class VoiceMessage implements IMessageHandler {
     public key: MessageType = 'voice';
@@ -15,9 +17,10 @@ export default class VoiceMessage implements IMessageHandler {
         this.converter = new Converter();
     }
 
-    // @ts-ignore
-    async handle(ctx: Context<Update>, config: IBotConfig): void {
+    async handle(ctx: any, config: IBotConfig): Promise<void> {
         const uploader: Uploader = new Uploader(config.paths.upload);
+
+        ctx.session ??= INITIAL_SESSION;
 
         const userId: string = String(ctx.message.from.id);
         const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
@@ -32,9 +35,16 @@ export default class VoiceMessage implements IMessageHandler {
                 return;
             }
 
-            const messages: ChatCompletionRequestMessage[] = [{role: 'user', content}];
+            await ctx.reply(code(`Ваш запрос: ${content}`))
 
-            const response: any = await this.openAiService.chatCompletion(messages);
+            ctx.session.messages.push({role: 'user', content});
+
+            const response: any = await this.openAiService.chatCompletion(ctx.session.messages);
+
+            ctx.session.messages.push({
+                role: OpenAiChatRoles.ASSISTANT,
+                content: response.content,
+            });
 
             await ctx.reply(response?.content);
         } catch (err: any) {
